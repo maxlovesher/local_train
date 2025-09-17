@@ -7,161 +7,167 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Attendance Calculator</h1>
-            <p>Calculate how many classes you can bunk while maintaining your desired attendance percentage</p>
-        </header>
-
-        <div class="card">
-            <h2>Select Your Section</h2>
-            <select id="section-selector">
-                <option value="">-- Select Section --</option>
-                <option value="1">Section 1</option>
-                <option value="2">Section 2</option>
-                <option value="3">Section 3</option>
-                <option value="4">Section 4</option>
-                <option value="5">Section 5</option>
-                <option value="6">Section 6</option>
-                <option value="7">Section 7</option>
-                <option value="8">Section 8</option>
-                <option value="9">Section 9</option>
-                <option value="10">Section 10</option>
-                <option value="11">Section 11</option>
-                <option value="12">Section 12</option>
-                <option value="13">Section 13</option>
-                <option value="14">Section 14</option>
-                <option value="15">Section 15</option>
-                <option value="16">Section 16</option>
-                <option value="17">Section 17</option>
-                <option value="18">Section 18</option>
-                <option value="19">Section 19</option>
-                <option value="20">Section 20</option>
-                <option value="21">Section 21</option>
-                <option value="22">Section 22</option>
-                <option value="23">Section 23</option>
-                <option value="24">Section 24</option>
-                <option value="25">Section 25</option>
-                <option value="26">Section 26</option>
-                <option value="27">Section 27</option>
-                <option value="28">Section 28</option>
-                <option value="29">Section 29</option>
-                <option value="30">Section 30</option>
-                <option value="31">Section 31</option>
-                <option value="32">Section 32</option>
-                <option value="33">Section 33</option>
-                <option value="34">Section 34</option>
-                <option value="35">Section 35</option>
-                <option value="36">Section 36</option>
-                <option value="37">Section 37</option>
-                <option value="38">Section 38</option>
-                <option value="39">Section 39</option>
-                <option value="40">Section 40</option>
-                <option value="41">Section 41</option>
-                <option value="42">Section 42</option>
-                <option value="43">Section 43</option>
-                <option value="44">Section 44</option>
-                <option value="45">Section 45</option>
-                <option value="46">Section 46</option>
-                <option value="47">Section 47</option>
-                <option value="48">Section 48</option>
-                <option value="49">Section 49</option>
-                <option value="50">Section 50</option>
-                <option value="51">Section 51</option>
-                <option value="52">Section 52</option>
-                <option value="53">Section 53</option>
-                <option value="54">Section 54</option>
-            </select>
-        </div>
-
-        <div id="timetable-container" class="card" style="display: none;">
-            <h2>Your Timetable</h2>
-            <div id="timetable"></div>
-        </div>
-
-        <div id="attendance-form-container" class="card" style="display: none;">
-            <h2>Attendance Information</h2>
-            <div class="info-box">
-                <p><strong>Note:</strong> Enter your attendance percentage based on classes held so far, not the entire semester.</p>
-                <p>Example: If 30 classes have been held and you attended 27, enter 90% (not 27/60 for the whole semester).</p>
+    
+    <div id="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 id="auth-title">Sign In</h1>
+                <p id="auth-subtitle">Access your dashboard</p>
             </div>
-            <form id="attendance-form">
-                <div>
-                    <label for="start-date">Start Date of Semester:</label>
-                    <input type="date" id="start-date" required>
+            
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label for="login-username">Username or Email</label>
+                    <input type="text" id="login-username" name="username" placeholder="Enter your username or email" required>
+                    <div class="error-message" id="loginUsernameError">Please enter a valid username or email</div>
                 </div>
-
-                <div>
-                    <label for="end-date">End Date of Semester:</label>
-                    <input type="date" id="end-date" required>
+                
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+                    <div class="error-message" id="loginPasswordError">Please enter your password</div>
                 </div>
-
-                <div>
-                    <label for="desired-attendance">Desired Attendance Percentage:</label>
-                    <input type="number" id="desired-attendance" min="0" max="100" value="75" required>
+                
+                <button type="submit" class="btn">Sign In</button>
+                
+                <div class="form-footer">
+                    <p>Don't have an account? <a href="#" id="showRegister">Register here</a></p>
+                    <p><a href="#">Forgot Password?</a></p>
                 </div>
+            </form>
 
-                <h3>Current Attendance Percentage (Based on Classes Held So Far)</h3>
-                <div id="subject-inputs">
+            <form class="login-form hidden" id="registerForm">
+                <div class="form-group">
+                    <label for="register-username">Username or Email</label>
+                    <input type="text" id="register-username" name="username" placeholder="Choose a username or email" required>
+                    <div class="error-message" id="registerUsernameError">Username must be unique</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" name="password" placeholder="Create your password" required>
+                    <div class="error-message" id="registerPasswordError">Password is required</div>
+                </div>
+                
+                <button type="submit" class="btn">Register</button>
+                
+                <div class="form-footer">
+                    <p>Already have an account? <a href="#" id="showLogin">Sign in here</a></p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <div id="app-screen" class="hidden">
+        <div class="container">
+            <header>
+                <h1>Attendance Calculator</h1>
+                <button id="logout-btn" class="logout-btn">Logout</button>
+                <p>Calculate how many classes you can bunk while maintaining your desired attendance percentage</p>
+            </header>
+
+            <div class="card">
+                <h2>Select Your Section</h2>
+                <select id="section-selector">
+                    <option value="">-- Select Section --</option>
+                    <script>
+                        for (let i = 1; i <= 54; i++) {
+                            document.write('<option value="' + i + '">Section ' + i + '</option>');
+                        }
+                    </script>
+                </select>
+            </div>
+
+            <div id="timetable-container" class="card" style="display: none;">
+                <h2>Your Timetable</h2>
+                <div id="timetable"></div>
+            </div>
+
+            <div id="attendance-form-container" class="card" style="display: none;">
+                <h2>Attendance Information</h2>
+                <div class="info-box">
+                    <p><strong>Note:</strong> Enter your attendance percentage based on classes held so far, not the entire semester.</p>
+                    <p>Example: If 30 classes have been held and you attended 27, enter 90% (not 27/60 for the whole semester).</p>
+                </div>
+                <form id="attendance-form">
+                    <div>
+                        <label for="start-date">Start Date of Semester:</label>
+                        <input type="date" id="start-date" required>
                     </div>
 
-                <button type="submit">Calculate Attendance</button>
-            </form>
-        </div>
-        
-        <div id="holiday-register-container" class="card">
-            <h2>Add a Holiday</h2>
-            <form id="holiday-form">
-                <div>
-                    <label for="holiday-date">Holiday Date:</label>
-                    <input type="date" id="holiday-date" required>
-                </div>
-                <div>
-                    <label for="holiday-event">Event Name:</label>
-                    <input type="text" id="holiday-event" placeholder="e.g., University Holiday" required>
-                </div>
-                <button type="submit">Add Holiday</button>
-            </form>
-            <h3>Registered Holidays</h3>
-            <ul id="holiday-list"></ul>
-        </div>
+                    <div>
+                        <label for="end-date">End Date of Semester:</label>
+                        <input type="date" id="end-date" required>
+                    </div>
 
-        <div id="leave-register-container" class="card">
-            <h2>Register an Absence</h2>
-            <div class="info-box">
-                <p>Register a planned absence to see how it affects your projected attendance.</p>
+                    <div>
+                        <label for="desired-attendance">Desired Attendance Percentage:</label>
+                        <input type="number" id="desired-attendance" min="0" max="100" value="75" required>
+                    </div>
+
+                    <h3>Current Attendance Percentage (Based on Classes Held So Far)</h3>
+                    <div id="subject-inputs">
+                        </div>
+
+                    <button type="submit">Calculate Attendance</button>
+                </form>
             </div>
-            <form id="leave-form">
-                <div>
-                    <label for="leave-date">Absence Date:</label>
-                    <input type="date" id="leave-date" required>
+            
+            <div id="holiday-register-container" class="card">
+                <h2>Add a Holiday</h2>
+                <form id="holiday-form">
+                    <div>
+                        <label for="holiday-date">Holiday Date:</label>
+                        <input type="date" id="holiday-date" required>
+                    </div>
+                    <div>
+                        <label for="holiday-event">Event Name:</label>
+                        <input type="text" id="holiday-event" placeholder="e.g., University Holiday" required>
+                    </div>
+                    <button type="submit">Add Holiday</button>
+                </form>
+                <h3>Registered Holidays</h3>
+                <ul id="holiday-list"></ul>
+            </div>
+
+            <div id="leave-register-container" class="card">
+                <h2>Register an Absence</h2>
+                <div class="info-box">
+                    <p>Register a planned absence to see how it affects your projected attendance.</p>
                 </div>
-                <button type="submit">Add Absence</button>
-            </form>
-            <h3>Registered Absences</h3>
-            <ul id="leave-list"></ul>
-        </div>
-        
-        <div class="loader">
-            <div class="loader-spinner"></div>
-            <p>Calculating your attendance...</p>
-        </div>
+                <form id="leave-form">
+                    <div>
+                        <label for="leave-date">Absence Date:</label>
+                        <input type="date" id="leave-date" required>
+                    </div>
+                    <button type="submit">Add Absence</button>
+                </form>
+                <h3>Registered Absences</h3>
+                <ul id="leave-list"></ul>
+            </div>
 
-        <div id="results-section" class="card results-section">
-            <h2>Results</h2>
-            <div id="results-table-container"></div>
-        </div>
+            <div class="loader">
+                <div class="loader-spinner"></div>
+                <p>Calculating your attendance...</p>
+            </div>
 
-        <div class="explanation">
-            <h2>How It Works</h2>
-            <p>This calculator helps you determine how many classes you can miss ("bunk") while maintaining your desired attendance percentage.</p>
-            <p><strong>Key Calculations:</strong></p>
-            <ul>
-                <li>Total classes in semester = Classes per week × Number of weeks</li>
-                <li>Classes held so far = (Weeks passed so far) × Classes per week</li>
-                <li>Classes attended = (Your attendance %) × Classes held so far</li>
-                <li>Classes you can bunk = Total classes - (Classes needed to maintain desired %)</li>
-            </ul>
+            <div id="results-section" class="card results-section">
+                <h2>Results</h2>
+                <div id="results-table-container"></div>
+            </div>
+
+            <div class="explanation">
+                <h2>How It Works</h2>
+                <p>This calculator helps you determine how many classes you can miss ("bunk") while maintaining your desired attendance percentage.</p>
+                <p><strong>Key Calculations:</strong></p>
+                <ul>
+                    <li>Total classes in semester = Classes per week × Number of weeks</li>
+                    <li>Classes held so far = (Weeks passed so far) × Classes per week</li>
+                    <li>Classes attended = (Your attendance %) × Classes held so far</li>
+                    <li>Classes you can bunk = Total classes - (Classes needed to maintain desired %)</li>
+                </ul>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

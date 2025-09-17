@@ -1,3 +1,4 @@
+/* --- GLOBAL & UTILITY STYLES --- */
 :root {
     --primary-color: #4a6fa5;
     --secondary-color: #6b8cbb;
@@ -16,14 +17,128 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: var(--dark-color);
-    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
     min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* --- LOGIN SCREEN STYLES --- */
+#login-screen {
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.login-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    overflow: hidden;
+}
+
+.login-header {
+    background-color: #4a6fc7;
+    color: white;
+    padding: 25px;
+    text-align: center;
+}
+
+.login-header h1 {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.login-header p {
+    margin-top: 8px;
+    opacity: 0.9;
+}
+
+.login-form {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #4a6fc7;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 111, 199, 0.2);
+}
+
+.btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #4a6fc7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #3b5aa6;
+}
+
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+}
+
+.form-footer a {
+    color: #4a6fc7;
+    text-decoration: none;
+}
+
+.form-footer a:hover {
+    text-decoration: underline;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+/* --- CALCULATOR APP STYLES --- */
+#app-screen {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
     padding: 20px;
 }
 
@@ -39,6 +154,20 @@ header {
     background: white;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
+    position: relative; 
+}
+
+.logout-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 8px 15px;
+    background-color: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 h1 {
@@ -79,7 +208,7 @@ p {
     transform: translateY(-2px);
 }
 
-select, input, button {
+select, input, button:not(.logout-btn) {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
@@ -88,13 +217,7 @@ select, input, button {
     font-size: 16px;
 }
 
-select:focus, input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
-}
-
-button {
+button:not(.logout-btn):not(.btn) {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -105,7 +228,7 @@ button {
     margin-top: 10px;
 }
 
-button:hover {
+button:not(.logout-btn):hover {
     background-color: var(--secondary-color);
     transform: translateY(-2px);
 }
@@ -241,4 +364,158 @@ tr:hover {
     padding: 15px;
     background-color: #f8f9fa;
     border-radius: var(--border-radius);
+}
+/* Add these styles to the end of your existing styles.css file */
+
+/* Holiday and Leave Item Styling */
+.holiday-item, .leave-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    margin: 4px 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    transition: background-color 0.2s ease;
+}
+
+.holiday-item:hover, .leave-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Official holiday styling */
+.holiday-item.official {
+    background-color: #e8f5e8;
+    border-color: #c3e6c3;
+}
+
+.official-tag {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+/* Student-added holiday styling */
+.holiday-item.student-added {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+/* Delete button styling */
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    flex-shrink: 0;
+    margin-left: 8px;
+    line-height: 1;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.1);
+}
+
+.delete-btn:active {
+    transform: scale(0.95);
+}
+
+.delete-btn:focus {
+    outline: 2px solid #dc3545;
+    outline-offset: 2px;
+}
+
+/* No items message */
+.no-items {
+    color: #6c757d;
+    font-style: italic;
+    text-align: center;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    border-radius: 6px;
+    list-style: none;
+}
+
+/* Holiday and leave list containers */
+#holiday-list, #leave-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+    padding: 8px;
+}
+
+/* Empty list styling */
+#holiday-list:empty, #leave-list:empty {
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+    font-style: italic;
+}
+
+#holiday-list:empty::before {
+    content: "No holidays added yet";
+}
+
+#leave-list:empty::before {
+    content: "No leave dates added yet";
+}
+
+/* Scrollbar styling for webkit browsers */
+#holiday-list::-webkit-scrollbar, #leave-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#holiday-list::-webkit-scrollbar-track, #leave-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+#holiday-list::-webkit-scrollbar-thumb, #leave-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+#holiday-list::-webkit-scrollbar-thumb:hover, #leave-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .holiday-item, .leave-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .delete-btn {
+        align-self: flex-end;
+        margin-left: 0;
+        margin-top: 4px;
+    }
+    
+    .official-tag {
+        margin-left: 0;
+        margin-top: 4px;
+    }
 }
