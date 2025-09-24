@@ -74,11 +74,6 @@ async function initializeApp() {
         console.log('Auth Token:', authToken);
         console.log('User ID:', userId);
         
-        // Test each API call individually with better error handling
-        let timetableJson = {};
-        let officialHolidaysJson = [];
-        let userPrefs = null;
-        
         // 1. Try to fetch timetable data
         try {
             console.log('Fetching timetable from:', `${API_URL}/data/timetable`);
@@ -89,12 +84,11 @@ async function initializeApp() {
                 console.log('Timetable data loaded:', timetableJson);
             } else {
                 console.error('Timetable fetch failed:', await timetableResponse.text());
-                // Use sample data as fallback
-                timetableJson = getSampleTimetableData();
+                throw new Error('Failed to load timetable data from server.');
             }
         } catch (err) {
             console.error('Error fetching timetable:', err);
-            timetableJson = getSampleTimetableData();
+            throw new Error(`Critical error: Could not load timetable data. Please check the backend server. Error: ${err.message}`);
         }
         
         // 2. Try to fetch holidays data
@@ -107,12 +101,11 @@ async function initializeApp() {
                 console.log('Holidays data loaded:', officialHolidaysJson);
             } else {
                 console.error('Holidays fetch failed:', await holidaysResponse.text());
-                // Use sample data as fallback
-                officialHolidaysJson = getSampleHolidaysData();
+                throw new Error('Failed to load holidays data from server.');
             }
         } catch (err) {
             console.error('Error fetching holidays:', err);
-            officialHolidaysJson = getSampleHolidaysData();
+            throw new Error(`Critical error: Could not load holidays data. Please check the backend server. Error: ${err.message}`);
         }
         
         // 3. Try to fetch user preferences
@@ -163,57 +156,9 @@ async function initializeApp() {
 
     } catch (error) {
         console.error('Critical Initialization Error:', error);
-        alert(`Failed to load user data: ${error.message}. Using sample data for demonstration.`);
-        // Use sample data as fallback
-        timetableData = getSampleTimetableData();
-        officialHolidays = getSampleHolidaysData();
-        showHolidays();
-        showAbsences();
+        alert(`Failed to load data: ${error.message}. The application cannot function without this data.`);
+        toggleScreens(false);
     }
-}
-
-// Sample data fallback functions
-function getSampleTimetableData() {
-    return {
-        "1": [
-            {
-                "subject": "Mathematics",
-                "code": "MATH101",
-                "classesPerDay": { "0": 0, "1": 2, "2": 1, "3": 2, "4": 1, "5": 0, "6": 0 }
-            },
-            {
-                "subject": "Physics",
-                "code": "PHY101", 
-                "classesPerDay": { "0": 0, "1": 1, "2": 2, "3": 1, "4": 2, "5": 0, "6": 0 }
-            },
-            {
-                "subject": "Chemistry",
-                "code": "CHEM101",
-                "classesPerDay": { "0": 0, "1": 1, "2": 1, "3": 1, "4": 1, "5": 0, "6": 0 }
-            }
-        ],
-        "2": [
-            {
-                "subject": "Biology",
-                "code": "BIO101",
-                "classesPerDay": { "0": 0, "1": 2, "2": 1, "3": 1, "4": 2, "5": 0, "6": 0 }
-            },
-            {
-                "subject": "English",
-                "code": "ENG101",
-                "classesPerDay": { "0": 0, "1": 1, "2": 2, "3": 2, "4": 1, "5": 0, "6": 0 }
-            }
-        ]
-    };
-}
-
-function getSampleHolidaysData() {
-    return [
-        { "date": "2024-01-26", "event": "Republic Day" },
-        { "date": "2024-08-15", "event": "Independence Day" },
-        { "date": "2024-10-02", "event": "Gandhi Jayanti" },
-        { "date_start": "2024-12-25", "date_end": "2024-12-31", "event": "Winter Break" }
-    ];
 }
 
 function handleLogout() {
@@ -464,7 +409,7 @@ function countScheduledAbsences(subject, startDate, endDate) {
         if (date >= start && date <= end) {
             const dayOfWeek = date.getDay().toString();
             if (subject.classesPerDay && subject.classesPerDay[dayOfWeek] > 0) {
-                plannedAbsences += 1;
+                plannedAbsences += subject.classesPerDay[dayOfWeek];
             }
         }
     }
@@ -577,12 +522,13 @@ function createSubjectInputs(section) {
     subjectInputsContainer.innerHTML = '';
     subjects.forEach(subject => {
         const inputId = `attendance-${subject.code}`;
+        const classesHeldId = `classes-held-${subject.code}`;
         const inputDiv = document.createElement('div');
         inputDiv.className = 'subject-input';
         inputDiv.innerHTML = `
             <label for="${inputId}">${subject.subject} (${subject.code}):</label>
-            <input type="number" id="${inputId}" min="0" max="100" value="85" required>
-            <span>%</span>
+            <input type="number" id="${classesHeldId}" min="0" value="" placeholder="Classes Held" required>
+            <input type="number" id="${inputId}" min="0" value="" placeholder="Classes Attended" required>
         `;
         subjectInputsContainer.appendChild(inputDiv);
     });
@@ -660,92 +606,92 @@ function calculateAttendance() {
         }
         
         const results = [];
+
+        // Calculate total classes for the entire semester for display purposes
+        let totalClassesMap = {};
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+            const dayOfWeek = d.getDay().toString();
+            if (!isHoliday(d)) {
+                subjects.forEach(subject => {
+                    const code = subject.code;
+                    if (subject.classesPerDay && subject.classesPerDay[dayOfWeek] > 0) {
+                        totalClassesMap[code] = (totalClassesMap[code] || 0) + subject.classesPerDay[dayOfWeek];
+                    }
+                });
+            }
+        }
         
-        // Calculate weeks completed based on total days
-        const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        const daysCompleted = Math.ceil((today - startDate) / (1000 * 60 * 60 * 24));
-        const totalWeeks = Math.floor(totalDays / 7);
-        const weeksCompleted = Math.floor(daysCompleted / 7);
+        // Calculate upcoming classes from today until the end date
+        let upcomingClassesMap = {};
+        for (let d = new Date(today); d <= end; d.setDate(d.getDate() + 1)) {
+            const dayOfWeek = d.getDay().toString();
+            if (!isHoliday(d) && !isAbsent(d)) {
+                subjects.forEach(subject => {
+                    const code = subject.code;
+                    if (subject.classesPerDay && subject.classesPerDay[dayOfWeek] > 0) {
+                        upcomingClassesMap[code] = (upcomingClassesMap[code] || 0) + subject.classesPerDay[dayOfWeek];
+                    }
+                });
+            }
+        }
 
         // Add error handling for each subject calculation
         let hasValidationError = false;
 
         subjects.forEach(subject => {
-            const inputId = `attendance-${subject.code}`;
-            const inputElement = document.getElementById(inputId);
+            const classesAttendedElement = document.getElementById(`attendance-${subject.code}`);
+            const classesHeldElement = document.getElementById(`classes-held-${subject.code}`);
             
-            if (!inputElement) {
-                console.error(`Input element not found for subject: ${subject.code}`);
+            if (!classesAttendedElement || !classesHeldElement) {
+                console.error(`Input elements not found for subject: ${subject.code}`);
                 return;
             }
             
-            const currentAttendancePercentage = parseFloat(inputElement.value);
+            const classesAttended = parseInt(classesAttendedElement.value);
+            const classesHeldSoFar = parseInt(classesHeldElement.value);
 
-            if (isNaN(currentAttendancePercentage) || currentAttendancePercentage < 0 || currentAttendancePercentage > 100) {
-                alert(`Please enter a valid attendance percentage for ${subject.subject} (0-100)`);
+            if (isNaN(classesAttended) || isNaN(classesHeldSoFar) || classesAttended < 0 || classesHeldSoFar < 0 || classesAttended > classesHeldSoFar) {
+                alert(`Please enter valid numbers for classes attended and held for ${subject.subject}. Classes attended cannot be more than classes held.`);
                 hasValidationError = true;
                 return;
             }
 
-            // Validate subject structure
-            if (!subject.classesPerDay || typeof subject.classesPerDay !== 'object') {
-                console.error(`Invalid classesPerDay structure for subject: ${subject.code}`, subject);
-                return;
-            }
-
-            let classesHeldSoFar = 0;
-            let totalClasses = 0;
-
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-            const current = new Date();
-
-            // Count classes held so far, skipping holidays
-            for (let d = new Date(start); d <= current && d <= end; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = d.getDay().toString();
-                if (!isHoliday(d) && subject.classesPerDay[dayOfWeek] && subject.classesPerDay[dayOfWeek] > 0) {
-                    classesHeldSoFar += subject.classesPerDay[dayOfWeek];
-                }
-            }
+            const totalClasses = totalClassesMap[subject.code] || 0;
+            const classesLeft = upcomingClassesMap[subject.code] || 0;
             
-            // Count total classes in the semester, skipping holidays
-            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = d.getDay().toString();
-                if (!isHoliday(d) && subject.classesPerDay[dayOfWeek] && subject.classesPerDay[dayOfWeek] > 0) {
-                    totalClasses += subject.classesPerDay[dayOfWeek];
-                }
-            }
-
-            // Handle edge case where no classes are scheduled
-            if (totalClasses === 0) {
+            if (classesHeldSoFar === 0) {
                 console.warn(`No classes scheduled for subject: ${subject.subject}`);
                 return;
             }
 
-            const classesAttended = Math.round((currentAttendancePercentage / 100) * classesHeldSoFar);
+            const currentAttendancePercentage = (classesAttended / classesHeldSoFar) * 100;
+
+            const totalProjectedClasses = classesHeldSoFar + classesLeft;
+            const classesNeeded = Math.ceil((desiredAttendance / 100) * totalProjectedClasses);
+            
+            const attendanceGap = classesNeeded - classesAttended;
 
             let bunkableClasses = 0;
             let mustAttend = 0;
-            const totalClassesNeeded = Math.ceil((desiredAttendance / 100) * totalClasses);
-            const classesYouCanAffordToMiss = classesAttended - totalClassesNeeded;
-            const classesLeft = totalClasses - classesHeldSoFar;
-
-            const scheduledAbsencesCount = countScheduledAbsences(subject, today, endDate);
-
-            if (classesYouCanAffordToMiss >= 0) {
-                bunkableClasses = Math.max(0, classesYouCanAffordToMiss + classesLeft - scheduledAbsencesCount);
-            } else {
-                mustAttend = Math.abs(classesYouCanAffordToMiss) + scheduledAbsencesCount;
-                bunkableClasses = Math.max(0, classesLeft - mustAttend);
-            }
             
+            if (attendanceGap <= 0) {
+                // You've already attended enough classes, so you can bunk
+                bunkableClasses = classesLeft + attendanceGap;
+            } else {
+                // You need to attend more classes
+                mustAttend = Math.min(attendanceGap, classesLeft);
+                bunkableClasses = classesLeft - mustAttend;
+            }
+
             const projectedClassesAttended = classesAttended + (classesLeft - bunkableClasses);
-            const projectedAttendance = totalClasses > 0 ? (projectedClassesAttended / totalClasses) * 100 : 0;
+            const projectedAttendance = totalProjectedClasses > 0 ? (projectedClassesAttended / totalProjectedClasses) * 100 : 0;
             
             results.push({
                 subject: subject.subject,
                 code: subject.code,
-                totalClasses,
+                totalClasses, // Retained for display in the table
                 classesHeldSoFar,
                 classesAttended,
                 classesLeft,
@@ -761,7 +707,7 @@ function calculateAttendance() {
             return;
         }
 
-        displayResults(results, desiredAttendance, weeksCompleted, totalWeeks);
+        displayResults(results, desiredAttendance);
         
         if (loader) loader.style.display = 'none';
         resultsSection.style.display = 'block';
@@ -774,10 +720,9 @@ function calculateAttendance() {
     }
 }
 
-function displayResults(results, desiredAttendance, weeksCompleted, totalWeeks) {
+function displayResults(results, desiredAttendance) {
     let resultsHTML = `
         <p>Based on your desired attendance of <span class="highlight">${desiredAttendance}%</span></p>
-        <p>Weeks completed: ${weeksCompleted} of ${totalWeeks} total weeks</p>
         <table>
             <thead>
                 <tr>

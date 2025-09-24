@@ -87,8 +87,7 @@
             <div id="attendance-form-container" class="card" style="display: none;">
                 <h2>Attendance Information</h2>
                 <div class="info-box">
-                    <p><strong>Note:</strong> Enter your attendance percentage based on classes held so far, not the entire semester.</p>
-                    <p>Example: If 30 classes have been held and you attended 27, enter 90% (not 27/60 for the whole semester).</p>
+                    <p><strong>Note:</strong> Enter the absolute number of classes attended and held so far for each subject.</p>
                 </div>
                 <form id="attendance-form">
                     <div>
@@ -106,7 +105,7 @@
                         <input type="number" id="desired-attendance" min="0" max="100" value="75" required>
                     </div>
 
-                    <h3>Current Attendance Percentage (Based on Classes Held So Far)</h3>
+                    <h3>Enter Your Current Attendance (Number of Classes)</h3>
                     <div id="subject-inputs">
                         </div>
 
@@ -163,8 +162,8 @@
                 <p><strong>Key Calculations:</strong></p>
                 <ul>
                     <li>Total classes in semester = Classes per week × Number of weeks</li>
-                    <li>Classes held so far = (Weeks passed so far) × Classes per week</li>
-                    <li>Classes attended = (Your attendance %) × Classes held so far</li>
+                    <li>Classes held so far = (Your input)</li>
+                    <li>Classes attended = (Your input)</li>
                     <li>Classes you can bunk = Total classes - (Classes needed to maintain desired %)</li>
                 </ul>
             </div>
